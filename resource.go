@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
@@ -127,6 +128,17 @@ func (r Resource) Tags() map[string]string {
 				kk := strings.ToLower(parts[1])
 				vv := strings.ToLower(v)
 				t[kk] = vv
+			}
+			if k == "annotation" {
+				var dat map[string]interface{}
+				if err := json.Unmarshal([]byte(v), &dat); err != nil {
+					panic(err)
+				}
+				//fmt.Println(dat)
+				for k2 := range dat {
+					vv := strings.ToLower(fmt.Sprintf("%s", dat[k2]))
+					t[k2] = vv
+				}
 			}
 		}
 	case "digitalocean_droplet", "google_compute_instance", "scaleway_server":
